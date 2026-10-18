@@ -2,7 +2,7 @@
 
 Transkritisk sampler för techno, som VST3 och AU för macOS (och VST3 för Windows). Ladda ett ljud, så hackar R-744 det i slices och spelar dem i takt med Bitwig genom en CO2-kylkrets: förångare, kompressor, gaskylare och ventil. Kretsen går runt, ljudet med den.
 
-Ingen annan sampler fungerar så här: ljudet **cirkulerar** genom distorsion och filter i takt, ventilen **pendlar** som en termostatventil som inte hittar hem, och ett levande **p-h-diagram** visar kretsen medan du skruvar.
+Det här är ingen vanlig sampler: ljudet **cirkulerar** genom distorsion och filter i takt, ventilen **pendlar** som en termostatventil som inte hittar hem, och ett levande **p-h-diagram** visar kretsen medan du skruvar.
 
 ![R-744](docs/r744-ui.png)
 
