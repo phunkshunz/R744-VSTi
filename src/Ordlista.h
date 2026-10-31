@@ -34,6 +34,7 @@ inline constexpr Par kOrdlista[] =
     { "Ångrat.", "Undone." },
     { "Hur lång loopen är. AUTO gissar.", "How long the loop is. AUTO guesses." },
     { "Ackordet som resonatorerna står på. Håll tangenter för att spela egna.", "The chord the resonators sit on. Hold keys to play your own." },
+    { "Grundton", "Root" },
     { "Molnet står still på ett ställe i loopen", "The cloud stands still at one place in the loop" },
     { "SLAG", "HITS" },
     { "NIVÅ", "LEVEL" },
