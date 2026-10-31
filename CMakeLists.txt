@@ -24,6 +24,11 @@ else()
 endif()
 
 # Samma plugin-kod som gamla R-744, så att den ersätter den i DAW:en
+# Linux: bygg även LV2
+set(PHZ_EXTRA_FORMATS "")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(PHZ_EXTRA_FORMATS LV2)
+endif()
 juce_add_plugin(R744
     COMPANY_NAME "phunkshunz"
     PRODUCT_NAME "R-744"
@@ -38,7 +43,8 @@ juce_add_plugin(R744
     COPY_PLUGIN_AFTER_BUILD FALSE
     VST3_CATEGORIES Instrument Sampler
     AU_MAIN_TYPE kAudioUnitType_MusicDevice
-    FORMATS ${R744_FORMATS})
+    LV2URI "https://phunkshunz.github.io/lv2/R744"
+    FORMATS ${R744_FORMATS} ${PHZ_EXTRA_FORMATS})
 
 target_sources(R744
     PRIVATE
