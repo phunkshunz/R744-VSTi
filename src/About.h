@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Gui.h"
+#include "Sprak.h"
 
 // MASKINHALLEN: om-sidan som öppnas när man klickar på loggan. Klick var som helst stänger.
 class AboutOverlay : public juce::Component
@@ -35,22 +36,22 @@ public:
         auto r = card.reduced (44, 28);
         g.setColour (sodium);
         g.setFont (juce::FontOptions (46.0f, juce::Font::bold).withHorizontalScale (0.8f));
-        g.drawText ("MASKINHALLEN", r.removeFromTop (48), juce::Justification::centredLeft);
+        g.drawText (sprak::tr ("MASKINHALLEN"), r.removeFromTop (48), juce::Justification::centredLeft);
         g.setColour (muted);
         g.setFont (juce::FontOptions (10.5f));
-        g.drawText (juce::String::fromUTF8 ("BETONG  ·  ARMERING  ·  FUKT  ·  KOLV  ·  SMUTS  ·  VALV  ·  SMIDET  ·  R-744"), r.removeFromTop (16), juce::Justification::centredLeft);
+        g.drawText (sprak::trU ("PHUNKSHUNZ AUDIO"), r.removeFromTop (16), juce::Justification::centredLeft);
         r.removeFromTop (26);
 
         g.setColour (text);
         g.setFont (juce::FontOptions (24.0f, juce::Font::bold));
-        g.drawText (juce::String::fromUTF8 ("Byggt i ett båtvarv."), r.removeFromTop (30), juce::Justification::centredLeft);
+        g.drawText (sprak::trU ("Byggt i ett båtvarv."), r.removeFromTop (30), juce::Justification::centredLeft);
         r.removeFromTop (12);
 
         juce::AttributedString body;
         body.setLineSpacing (5.0f);
         const auto bodyFont = juce::Font (juce::FontOptions (14.5f));
         const auto boldFont = juce::Font (juce::FontOptions (14.5f, juce::Font::bold));
-        auto add = [&] (const char* s, bool bold = false) { body.append (juce::String::fromUTF8 (s), bold ? boldFont : bodyFont, bold ? sodium : text); };
+        auto add = [&] (const char* s, bool bold = false) { body.append (sprak::trU (s), bold ? boldFont : bodyFont, bold ? sodium : text); };
         add ("På 90-talet låg Stockholms fetaste technoklubb i ett skramlande båtvarv. Den hette ");
         add ("Docklands", true);
         add (".\n\nDär lärde jag mig hur techno ska kännas: basen som får plåten att skramla, golvet som svettas, "
@@ -66,8 +67,8 @@ public:
         auto foot = card.reduced (44, 22).removeFromBottom (18);
         g.setColour (muted);
         g.setFont (juce::FontOptions (10.5f));
-        g.drawText (product + juce::String::fromUTF8 ("  ·  ") + line, foot, juce::Justification::centredLeft);
-        g.drawText (juce::String::fromUTF8 ("Klicka för att stänga"), foot, juce::Justification::centredRight);
+        g.drawText (product + sprak::trU ("  ·  ") + line, foot, juce::Justification::centredLeft);
+        g.drawText (sprak::trU ("Klicka för att stänga"), foot, juce::Justification::centredRight);
     }
 
     void mouseDown (const juce::MouseEvent&) override { setVisible (false); }

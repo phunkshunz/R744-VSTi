@@ -1,10 +1,11 @@
 #include "PluginEditor.h"
+#include "Sprak.h"
 
 using namespace ArmColours;
 
 namespace
 {
-juce::String u8 (const char* s) { return juce::String::fromUTF8 (s); }
+juce::String u8 (const char* s) { return sprak::trU (s); }
 void fillBox (juce::ComboBox& b, juce::AudioProcessorValueTreeState& s, const char* id)
 {
     if (auto* p = dynamic_cast<juce::AudioParameterChoice*> (s.getParameter (id))) b.addItemList (p->choices, 1);
@@ -47,7 +48,7 @@ void WaveView::paint (juce::Graphics& g)
     g.fillRect (x - 1.0f, r.getY(), 2.0f, r.getHeight());
 }
 
-R744Editor::R744Editor (R744Processor& p) : AudioProcessorEditor (p), proc (p)
+R744Panel::R744Panel (R744Processor& p) : proc (p)
 {
     setLookAndFeel (&lnf);
     auto& s = proc.apvts;
@@ -107,7 +108,7 @@ R744Editor::R744Editor (R744Processor& p) : AudioProcessorEditor (p), proc (p)
                      K { &kBreath, "breath", "ANDNING", sodium }, K { &kWow, "wow", "BAND", concrete },
                      K { &kRoom, "room", "RUM", cold }, K { &kSize, "size", "STORLEK", cold }, K { &kOut, "out", "UT", concrete } })
     {
-        k.k->attach (s, k.id, juce::String::fromUTF8 (k.name));
+        k.k->attach (s, k.id, sprak::trU (k.name));
         k.k->setAccent (k.c);
         addAndMakeVisible (*k.k);
     }
@@ -127,9 +128,9 @@ R744Editor::R744Editor (R744Processor& p) : AudioProcessorEditor (p), proc (p)
     startTimerHz (30);
 }
 
-R744Editor::~R744Editor() { stopTimer(); setLookAndFeel (nullptr); }
+R744Panel::~R744Panel() { stopTimer(); setLookAndFeel (nullptr); }
 
-void R744Editor::filesDropped (const juce::StringArray& files, int, int)
+void R744Panel::filesDropped (const juce::StringArray& files, int, int)
 {
     if (files.isEmpty()) return;
     const juce::File f (files[0]);
@@ -137,7 +138,7 @@ void R744Editor::filesDropped (const juce::StringArray& files, int, int)
     repaint();
 }
 
-void R744Editor::chooseLoop()
+void R744Panel::chooseLoop()
 {
     chooser = std::make_unique<juce::FileChooser> (u8 ("Välj en loop"), juce::File::getSpecialLocation (juce::File::userMusicDirectory), "*.wav;*.aif;*.aiff;*.flac;*.mp3;*.ogg");
     chooser->launchAsync (juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles, [this] (const juce::FileChooser& fc)
@@ -150,7 +151,7 @@ void R744Editor::chooseLoop()
     });
 }
 
-void R744Editor::chooseFolder()
+void R744Panel::chooseFolder()
 {
     chooser = std::make_unique<juce::FileChooser> (u8 ("Välj en mapp med loopar (undermappar följer med)"), juce::File::getSpecialLocation (juce::File::userMusicDirectory));
     chooser->launchAsync (juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectDirectories, [this] (const juce::FileChooser& fc)
@@ -162,7 +163,7 @@ void R744Editor::chooseFolder()
     });
 }
 
-void R744Editor::subMenu()
+void R744Panel::subMenu()
 {
     const auto subs = proc.subfolders();
     if (subs.isEmpty()) { setStatus (u8 ("Ladda en mapp först.")); return; }
@@ -176,12 +177,12 @@ void R744Editor::subMenu()
     });
 }
 
-void R744Editor::mouseDown (const juce::MouseEvent& e)
+void R744Panel::mouseDown (const juce::MouseEvent& e)
 {
     if (logoArea.contains (e.getPosition())) { about.setBounds (getLocalBounds()); about.setVisible (true); about.toFront (false); }
 }
 
-void R744Editor::timerCallback()
+void R744Panel::timerCallback()
 {
     wave.repaint();
     undoBtn.setEnabled (proc.canUndo());
@@ -191,13 +192,13 @@ void R744Editor::timerCallback()
     repaint (loopArea.removeFromTop (30));
 }
 
-void R744Editor::paint (juce::Graphics& g)
+void R744Panel::paint (juce::Graphics& g)
 {
     g.fillAll (ground);
     // huvud
     g.setColour (sodium);
     g.setFont (juce::FontOptions (40.0f, juce::Font::bold).withHorizontalScale (0.85f));
-    g.drawText ("R-744", logoArea, juce::Justification::centredLeft);
+    g.drawText (sprak::tr ("R-744"), logoArea, juce::Justification::centredLeft);
     g.setColour (muted);
     g.setFont (juce::FontOptions (10.5f));
     g.drawText (u8 ("KLANGMASKIN · MASKINHALLEN · LOOPAR BLIR TON"), header.withTrimmedLeft (150).withWidth (360), juce::Justification::centredLeft);
@@ -209,7 +210,7 @@ void R744Editor::paint (juce::Graphics& g)
         g.setColour (text);
         juce::String info = proc.hasSample() ? proc.sampleName() + "   ·   " + juce::String (proc.loopBeats() / 4) + (proc.loopBeats() == 4 ? " takt" : " takter") : u8 ("ingen loop");
         if (proc.folderSize() > 0) info += u8 ("   ·   mapp ") + proc.folderName() + " / " + proc.currentSub() + "  (" + juce::String (proc.folderSize()) + ")";
-        g.drawText (info, t, juce::Justification::centredLeft, true);
+        g.drawText (sprak::tr (info), t, juce::Justification::centredLeft, true);
         if (! proc.running.load())
         {
             g.setColour (sodium);
@@ -239,10 +240,10 @@ void R744Editor::paint (juce::Graphics& g)
 
     g.setColour (status.isNotEmpty() ? cold : muted);
     g.setFont (juce::FontOptions (11.5f));
-    g.drawText (status, statusArea, juce::Justification::centredLeft, true);
+    g.drawText (sprak::tr (status), statusArea, juce::Justification::centredLeft, true);
 }
 
-void R744Editor::resized()
+void R744Panel::resized()
 {
     auto r = getLocalBounds().reduced (14);
     header = r.removeFromTop (56);
@@ -324,4 +325,40 @@ void R744Editor::resized()
         knobRow (a.removeFromTop (100), { &kRoom, &kSize }, 100);
     }
     about.setBounds (getLocalBounds());
+}
+
+//==============================================================================
+R744Editor::R744Editor (R744Processor& p) : AudioProcessorEditor (&p), proc (p)
+{
+    sprak::laddaOm();
+    byggPanel();
+    sprakKnapp.accent = sodium;
+    sprakKnapp.onClick = [this]
+    {
+        sprak::sattEngelska (! sprak::engelska());
+        // bygg om panelen efter klicket, aldrig mitt i det
+        juce::Component::SafePointer<R744Editor> self (this);
+        juce::MessageManager::callAsync ([self] { if (self != nullptr) self->byggPanel(); });
+    };
+    addAndMakeVisible (sprakKnapp);
+    setSize (1120, 700);
+}
+
+R744Editor::~R744Editor() = default;
+
+void R744Editor::byggPanel()
+{
+    panel.reset();
+    panel = std::make_unique<R744Panel> (proc);
+    sprak::oversattAllt (*panel);
+    addAndMakeVisible (*panel);
+    sprakKnapp.toFront (false);
+    sprakKnapp.repaint();
+    if (getWidth() > 0) resized();
+}
+
+void R744Editor::resized()
+{
+    if (panel != nullptr) panel->setBounds (getLocalBounds());
+    sprakKnapp.setBounds (14 + 150, 14 + 4, 38, 14);
 }
